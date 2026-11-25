@@ -1,0 +1,17 @@
+[
+  {
+    "maCapDo": "CD01",
+    "tenCapDo": "Beginner",
+    "mucHocPhi": 2500000
+  },
+  {
+    "maCapDo": "CD02",
+    "tenCapDo": "Intermediate",
+    "mucHocPhi": 3500000
+  },
+  {
+    "maCapDo": "CD03",
+    "tenCapDo": "Advanced",
+    "mucHocPhi": 4500000
+  }
+]

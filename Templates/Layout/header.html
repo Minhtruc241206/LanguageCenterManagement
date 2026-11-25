@@ -1,0 +1,43 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top py-3">
+        <div class="container">
+            <a class="navbar-brand fw-bold d-flex align-items-center gap-2 text-primary" href="/">
+                <span class="bg-primary text-white rounded-3 d-inline-flex align-items-center justify-content-center shadow-sm" style="width: 38px; height: 38px;">
+                    <i class="bi bi-mortarboard-fill fs-5"></i>
+                </span>
+                <span class="fs-5 tracking-tight">Ngoại Ngữ Nhóm 7</span>
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto ms-lg-4 gap-lg-2 fw-medium">
+                    <li class="nav-item">
+                        <a class="nav-link active text-primary" href="/">Trang Chủ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#gioi-thieu">Về Chúng Tôi</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#danh-sach-khoa-hoc">Khóa Học</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#lien-he">Liên Hệ</a>
+                    </li>
+                </ul>
+
+                {% if current_user.is_authenticated %}
+                    <div class="d-flex align-items-center gap-3 mt-3 mt-lg-0">
+                        <span class="fw-medium text-dark">
+                            <i class="bi bi-person-circle text-primary me-1"></i>{{ current_user.hoTen }}
+                        </span>
+                        <a href="/logout" class="btn btn-outline-danger rounded-pill px-3 btn-sm fw-medium">Đăng xuất</a>
+                    </div>
+                {% else %}
+                    <div class="d-flex gap-2 mt-3 mt-lg-0">
+                        <a href="/login" class="btn btn-outline-primary rounded-pill px-4 fw-medium">Đăng nhập</a>
+                        <a href="/register" class="btn btn-primary rounded-pill px-4 fw-medium shadow-sm">Đăng ký</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </nav>

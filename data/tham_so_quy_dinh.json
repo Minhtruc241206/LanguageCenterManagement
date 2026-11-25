@@ -1,0 +1,14 @@
+[
+  {
+    "maThamSo": "SI_SO_TOI_DA",
+    "tenThamSo": "Sĩ số tối đa mỗi lớp",
+    "giaTri": "25",
+    "moTa": "Số học viên tối đa được phép đăng ký vào 1 lớp"
+  },
+  {
+    "maThamSo": "DIEM_DAT",
+    "tenThamSo": "Điểm trung bình đạt",
+    "giaTri": "5.0",
+    "moTa": "Mức điểm tối thiểu để xếp loại Đạt"
+  }
+]

@@ -1,0 +1,62 @@
+[
+  {
+    "maND": "ND01",
+    "tenDangNhap": "admin",
+    "matKhau": "e10adc3949ba59abbe56e057f20f883e",
+    "hoTen": "Nguyễn Quản Lý",
+    "email": "admin@center.edu.vn",
+    "soDienThoai": "0901000001",
+    "vaiTro": "QuanLy",
+    "trangThai": true
+  },
+  {
+    "maND": "ND02",
+    "tenDangNhap": "thungan",
+    "matKhau": "e10adc3949ba59abbe56e057f20f883e",
+    "hoTen": "Trần Thu Ngân",
+    "email": "thungan@center.edu.vn",
+    "soDienThoai": "0901000002",
+    "vaiTro": "ThuNgan",
+    "trangThai": true
+  },
+  {
+    "maND": "ND03",
+    "tenDangNhap": "gv_anh",
+    "matKhau": "e10adc3949ba59abbe56e057f20f883e",
+    "hoTen": "Lê Minh Anh",
+    "email": "minhanh@center.edu.vn",
+    "soDienThoai": "0901000003",
+    "vaiTro": "GiaoVien",
+    "trangThai": true
+  },
+  {
+    "maND": "ND04",
+    "tenDangNhap": "gv_han",
+    "matKhau": "e10adc3949ba59abbe56e057f20f883e",
+    "hoTen": "Phạm Quốc Bảo",
+    "email": "quocbao@center.edu.vn",
+    "soDienThoai": "0901000004",
+    "vaiTro": "GiaoVien",
+    "trangThai": true
+  },
+  {
+    "maND": "ND05",
+    "tenDangNhap": "hv_an",
+    "matKhau": "e10adc3949ba59abbe56e057f20f883e",
+    "hoTen": "Nguyễn Văn An",
+    "email": "vanan@gmail.com",
+    "soDienThoai": "0902000001",
+    "vaiTro": "HocVien",
+    "trangThai": true
+  },
+  {
+    "maND": "ND06",
+    "tenDangNhap": "hv_binh",
+    "matKhau": "e10adc3949ba59abbe56e057f20f883e",
+    "hoTen": "Trần Thị Bình",
+    "email": "thibinh@gmail.com",
+    "soDienThoai": "0902000002",
+    "vaiTro": "HocVien",
+    "trangThai": true
+  }
+]

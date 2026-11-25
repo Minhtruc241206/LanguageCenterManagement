@@ -1,0 +1,130 @@
+:root {
+    --bs-body-font-family: 'Be Vietnam Pro', sans-serif;
+    --bs-primary: #f06595;
+    --bs-primary-rgb: 240, 101, 149;
+    --bs-primary-text-emphasis: #c2255c;
+    --bs-primary-bg-subtle: #fff0f6;
+    --bs-primary-border-subtle: #fcc2d7;
+    --bs-link-color: #e64980;
+    --bs-link-color-rgb: 230, 73, 128;
+    --bs-link-hover-color: #c2255c;
+    --bs-link-hover-color-rgb: 194, 37, 92;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    background-color: #fff9fb;
+}
+
+.btn-primary {
+    --bs-btn-bg: #f06595;
+    --bs-btn-border-color: #f06595;
+    --bs-btn-hover-bg: #e64980;
+    --bs-btn-hover-border-color: #e64980;
+    --bs-btn-active-bg: #d6336c;
+    --bs-btn-active-border-color: #d6336c;
+    --bs-btn-disabled-bg: #f06595;
+    --bs-btn-disabled-border-color: #f06595;
+}
+
+.btn-outline-primary {
+    --bs-btn-color: #e64980;
+    --bs-btn-border-color: #f06595;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #f06595;
+    --bs-btn-hover-border-color: #f06595;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #e64980;
+    --bs-btn-active-border-color: #e64980;
+}
+
+.form-control:focus {
+    border-color: #faa2c1;
+    box-shadow: 0 0 0 0.25rem rgba(240, 101, 149, 0.25);
+}
+
+.hero-banner {
+    background: linear-gradient(90deg, rgba(42, 18, 34, 0.95) 0%, rgba(56, 22, 44, 0.88) 50%, rgba(56, 22, 44, 0.35) 78%, rgba(42, 18, 34, 0.05) 100%),
+                url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1400&q=80') center/cover no-repeat;
+    position: relative;
+    overflow: hidden;
+    min-height: 360px;
+}
+.hero-banner h1, .hero-banner p {
+    text-shadow: 0 2px 8px rgba(130, 20, 60, 0.25);
+}
+
+
+.stats-banner {
+    background: linear-gradient(90deg, #fff0f6 0%, #ffdeeb 50%, #fcc2d7 100%);
+    border: 1.5px solid #faa2c1;
+}
+
+
+.course-card {
+    border: 2px solid #f8e1ea;
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.course-card:hover {
+    transform: translateY(-6px);
+    border-color: #f06595;
+    box-shadow: 0 12px 24px rgba(240, 101, 149, 0.18) !important;
+}
+
+.course-img {
+    height: 200px;
+    object-fit: cover;
+}
+
+.feature-card, .blog-card {
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.feature-card:hover, .blog-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(240, 101, 149, 0.15) !important;
+    border-color: #f06595 !important;
+}
+
+.blog-img {
+    height: 190px;
+    object-fit: cover;
+}
+
+
+.split-banner-img {
+    width: 100%;
+    height: 100%;
+    min-height: 360px;
+    object-fit: cover;
+    object-position: center top;
+}
+
+.cta-dark-banner {
+    background-color: #3b2333;
+}
+
+.cta-tilted-title {
+    display: inline-block;
+    transform: rotate(-2deg);
+    letter-spacing: -0.5px;
+}
+
+.btn-cta-yellow {
+    background-color: #ffc400;
+    color: #1e293b;
+    border: none;
+    transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-cta-yellow:hover {
+    background-color: #ffca2c;
+    color: #0f172a;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 196, 0, 0.35);
+}

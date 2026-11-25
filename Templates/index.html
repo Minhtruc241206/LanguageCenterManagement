@@ -1,0 +1,387 @@
+{%extends 'Layout/base.html'%}
+
+{%block content%}
+<main class="container my-4 flex-grow-1">
+
+        <div id="gioi-thieu" class="card border-0 rounded-4 overflow-hidden shadow-sm mb-5">
+            <div class="hero-banner text-white p-4 p-md-5 d-flex align-items-center">
+                <div class="row align-items-center w-100">
+                    <div class="col-lg-8">
+                        <span class="badge bg-warning text-dark rounded-pill px-3 py-2 mb-3 fw-semibold shadow-sm">
+                            <i class="bi bi-megaphone-fill me-1"></i> Tuyển sinh khóa mới 2026
+                        </span>
+                       <h1 class="fw-bold display-5 mb-3 lh-sm">
+                            Chinh phục Ngoại ngữ cùng <span class="text-warning">Ngoại Ngữ Nhóm 7</span>
+                       </h1>
+                        <p class="lead fs-6 text-white-50 mb-4" style="max-width: 560px;">
+                            Lộ trình bài bản từ cơ bản đến nâng cao cho Tiếng Anh, Tiếng Hàn và Tiếng Nhật. Xem lịch khai giảng và đăng ký giữ chỗ trực tuyến chỉ trong 1 phút.
+                        </p>
+                        <div class="d-flex flex-wrap gap-3">
+                            <a href="#danh-sach-khoa-hoc" class="btn btn-light text-primary fw-bold rounded-pill px-4 py-2 shadow-sm">
+                                <i class="bi bi-compass-fill me-1"></i>Khám phá khóa học
+                            </a>
+                            {% if not current_user.is_authenticated %}
+                            <a href="/register" class="btn btn-outline-light fw-semibold rounded-pill px-4 py-2">
+                                <i class="bi bi-person-plus-fill me-1"></i>Tạo tài khoản ngay
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-4 bg-white">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <i class="bi bi-tags-fill text-primary fs-5"></i>
+                    <h6 class="fw-bold mb-0 text-uppercase text-secondary">Học phí niêm yết theo cấp độ</h6>
+                </div>
+                <div class="row g-3">
+                    {% for cd in ds_cap_do %}
+                    <div class="col-md-4">
+                        <div class="p-3 rounded-3 bg-primary-subtle bg-opacity-50 border border-primary-subtle d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="small text-secondary fw-medium">Cấp độ</div>
+                                <div class="fw-bold text-dark fs-6">{{ cd.tenCapDo }}</div>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge bg-danger rounded-pill fs-6 px-3 py-2">
+                                    {{ "{:,.0f}".format(cd.mucHocPhi).replace(",", ".") }} đ
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <section class="stats-banner rounded-4 p-4 p-md-5 mb-5 shadow-sm">
+        <div class="row g-4 text-center text-md-start align-items-center">
+        <div class="col-6 col-lg-3">
+            <div class="display-6 fw-bold text-primary mb-1">3+</div>
+            <div class="fw-bold text-dark">Ngôn ngữ</div>
+            <div class="small text-secondary">Anh, Hàn, Nhật</div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="display-6 fw-bold text-primary mb-1">50+</div>
+            <div class="fw-bold text-dark">Giáo viên</div>
+            <div class="small text-secondary">chuyên môn cao</div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="display-6 fw-bold text-primary mb-1">15.000+</div>
+            <div class="fw-bold text-dark">Học viên</div>
+            <div class="small text-secondary">đồng hành</div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="display-6 fw-bold text-primary mb-1">2.500+</div>
+            <div class="fw-bold text-dark">Lớp học</div>
+            <div class="small text-secondary">đã khai giảng</div>
+        </div>
+         </div>
+        </section>
+
+
+        <div id="danh-sach-khoa-hoc" class="d-flex align-items-center justify-content-between mb-4">
+            <div class="d-flex align-items-center gap-2">
+                <span class="bg-primary rounded-2" style="width: 6px; height: 28px;"></span>
+                <h4 class="fw-bold mb-0">Danh sách Khóa học & Lớp đang mở</h4>
+            </div>
+            <span class="badge bg-white text-secondary border rounded-pill px-3 py-2">
+                Tổng cộng: {{ ds_khoa_hoc|length }} khóa học
+            </span>
+        </div>
+
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-5">
+    {% for kh in ds_khoa_hoc %}
+    <div class="col">
+        <div class="card course-card h-100 rounded-4 overflow-hidden shadow-sm bg-white">
+            <div class="position-relative">
+                {% if kh.Img %}
+                    <img src="{{ kh.Img }}" class="card-img-top course-img" alt="{{ kh.tenKH }}">
+                {% else %}
+                    <div class="course-img bg-primary-subtle d-flex align-items-center justify-content-center text-primary">
+                        <i class="bi bi-book-half display-4"></i>
+                    </div>
+                {% endif %}
+                <span class="badge bg-primary rounded-pill px-3 py-2 position-absolute top-0 start-0 m-3 shadow-sm">
+                    <i class="bi bi-award me-1"></i>{{ kh.cap_do.tenCapDo }}
+                </span>
+            </div>
+
+            <div class="card-body p-4 d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-center text-muted small mb-2">
+                    <span><i class="bi bi-clock me-1 text-primary"></i>{{ kh.thoiLuong }} buổi</span>
+                    <span><i class="bi bi-collection me-1 text-primary"></i>{{ kh.ds_lop|length }} lớp đang mở</span>
+                </div>
+
+                <h5 class="card-title fw-bold text-dark mb-2">{{ kh.tenKH }}</h5>
+                <p class="card-text text-secondary small flex-grow-1 mb-4">{{ kh.moTa }}</p>
+
+                <div class="pt-3 border-top d-flex align-items-center justify-content-between mb-3">
+                    <span class="small text-muted">Học phí trọn khóa</span>
+                    <span class="fs-5 fw-bold text-danger">
+                        {{ "{:,.0f}".format(kh.cap_do.mucHocPhi).replace(",", ".") }} đ
+                    </span>
+                </div>
+
+                <button type="button"
+                        class="btn btn-outline-primary w-100 rounded-pill fw-semibold py-2"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modalLop{{ kh.maKH }}">
+                    <i class="bi bi-list-ul me-1"></i>Xem danh sách lớp
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalLop{{ kh.maKH }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden">
+                <div class="modal-header bg-primary bg-gradient text-white px-4 py-3">
+                    <div>
+                        <h5 class="modal-title fw-bold mb-0">{{ kh.tenKH }}</h5>
+                        <small class="opacity-75">
+                            {{ kh.cap_do.tenCapDo }} • {{ kh.thoiLuong }} buổi •
+                            {{ "{:,.0f}".format(kh.cap_do.mucHocPhi).replace(",", ".") }} đ
+                        </small>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light text-secondary small text-uppercase">
+                                <tr>
+                                    <th class="ps-4 py-3">Mã lớp</th>
+                                    <th class="py-3">Tên lớp</th>
+                                    <th class="py-3">Giáo viên</th>
+                                    <th class="py-3">Khai giảng</th>
+                                    <th class="py-3">Sĩ số</th>
+                                    <th class="pe-4 py-3 text-end">Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for lh in kh.ds_lop %}
+                                <tr>
+                                    <td class="ps-4 fw-bold text-primary">{{ lh.maLop }}</td>
+                                    <td class="fw-medium">{{ lh.tenLop }}</td>
+                                    <td class="text-secondary small">
+                                        <i class="bi bi-person-circle me-1 text-primary"></i>
+                                        {{ lh.giao_vien.nguoi_dung.hoTen if lh.giao_vien else 'Chưa phân công' }}
+                                    </td>
+                                    <td class="small">
+                                        <i class="bi bi-calendar3 me-1 text-muted"></i>{{ lh.ngayBatDau.strftime('%d/%m/%Y') }}
+                                    </td>
+                                    <td>
+                                        {% if lh.siSoHienTai >= lh.siSoToiDa %}
+                                            <span class="badge bg-danger-subtle text-danger rounded-pill px-2 py-1">
+                                                {{ lh.siSoHienTai }}/{{ lh.siSoToiDa }}
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-success-subtle text-success rounded-pill px-2 py-1">
+                                                {{ lh.siSoHienTai }}/{{ lh.siSoToiDa }}
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="pe-4 text-end">
+                                        {% if lh.siSoHienTai >= lh.siSoToiDa %}
+                                            <button class="btn btn-sm btn-secondary rounded-pill px-3" disabled>
+                                                <i class="bi bi-lock-fill me-1"></i>Đủ sĩ số
+                                            </button>
+                                        {% elif current_user.is_authenticated %}
+                                            <form action="/dang-ky/{{ lh.maLop }}" method="post" class="d-inline">
+                                                <button type="submit" class="btn btn-sm btn-primary rounded-pill px-3 fw-medium">
+                                                    Đăng ký ngay
+                                                </button>
+                                            </form>
+                                        {% else %}
+                                            <a href="/login" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-medium">
+                                                Đăng nhập để đăng ký
+                                            </a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-4">
+                                        <i class="bi bi-inbox fs-4 d-block mb-1"></i>
+                                        Hiện chưa có lớp mở cho khóa học này.
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="modal-footer bg-light border-0">
+                    <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+
+<section class="py-5 px-3 px-md-5 bg-white rounded-4 shadow-sm border mb-5">
+    <div class="text-center mx-auto mb-5" style="max-width: 720px;">
+        <span class="text-primary fw-semibold small text-uppercase">Giải pháp giáo dục</span>
+        <h2 class="fw-bold text-dark mt-2 mb-3">Chương trình học dành cho mọi độ tuổi</h2>
+        <p class="text-secondary mb-0">
+            Ngoại Ngữ Nhóm 7 xây dựng lộ trình cá nhân hóa theo năng lực và mục tiêu riêng của từng học viên.
+            Tăng cường thực hành, rèn luyện phản xạ, giúp học viên tiến bộ nhanh và tự tin sử dụng ngoại ngữ trong cuộc sống.
+        </p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card feature-card h-100 border rounded-4 overflow-hidden shadow-sm">
+                <div class="p-4 pb-3">
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                        <span class="rounded-circle border border-2 border-primary d-inline-block" style="width: 12px; height: 12px;"></span>
+                        <h6 class="fw-bold text-dark mb-0">Giao tiếp Cơ bản</h6>
+                    </div>
+                    <a href="#danh-sach-khoa-hoc" class="text-primary text-decoration-none small fw-semibold">
+                        Xem chi tiết <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+                <div class="px-4 pb-4 mt-auto">
+                    <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=600&q=80"
+                         class="w-100 rounded-4 object-fit-cover" style="height: 200px;" alt="Giao tiếp Cơ bản">
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card feature-card h-100 border rounded-4 overflow-hidden shadow-sm">
+                <div class="p-4 pb-3">
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                        <span class="rounded-circle border border-2 border-primary d-inline-block" style="width: 12px; height: 12px;"></span>
+                        <h6 class="fw-bold text-dark mb-0">Luyện thi TOEIC / IELTS</h6>
+                    </div>
+                    <a href="#danh-sach-khoa-hoc" class="text-primary text-decoration-none small fw-semibold">
+                        Xem chi tiết <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+                <div class="px-4 pb-4 mt-auto">
+                    <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=600&q=80"
+                         class="w-100 rounded-4 object-fit-cover" style="height: 200px;" alt="Luyện thi chứng chỉ">
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card feature-card h-100 border rounded-4 overflow-hidden shadow-sm">
+                <div class="p-4 pb-3">
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                        <span class="rounded-circle border border-2 border-primary d-inline-block" style="width: 12px; height: 12px;"></span>
+                        <h6 class="fw-bold text-dark mb-0">Tiếng Hàn & Tiếng Nhật</h6>
+                    </div>
+                    <a href="#danh-sach-khoa-hoc" class="text-primary text-decoration-none small fw-semibold">
+                        Xem chi tiết <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+                <div class="px-4 pb-4 mt-auto">
+                    <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=600&q=80"
+                         class="w-100 rounded-4 object-fit-cover" style="height: 200px;" alt="Tiếng Hàn & Tiếng Nhật">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="mb-5">
+    <div class="text-center mb-4">
+        <span class="text-primary fw-semibold small text-uppercase">Kiến thức</span>
+        <h2 class="fw-bold text-dark mt-1">Blog học ngoại ngữ</h2>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card blog-card h-100 border rounded-4 overflow-hidden shadow-sm bg-white">
+                <img src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=600&q=80"
+                     class="card-img-top blog-img" alt="Từ vựng du lịch">
+                <div class="card-body p-4 d-flex flex-column">
+                    <h6 class="fw-bold text-dark mb-2">100+ từ vựng Tiếng Anh về du lịch thông dụng nhất</h6>
+                    <p class="text-secondary small flex-grow-1 mb-3">
+                        Tổng hợp từ vựng du lịch: phương tiện, điểm đến, khách sạn, sân bay... Hữu ích cho mọi độ tuổi khi chuẩn bị cho các chuyến đi thực tế.
+                    </p>
+                    <div class="small text-muted"><i class="bi bi-calendar3 me-1"></i>14/10/2026</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card blog-card h-100 border rounded-4 overflow-hidden shadow-sm bg-white">
+                <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80"
+                     class="card-img-top blog-img" alt="Mẹo luyện thi TOEIC">
+                <div class="card-body p-4 d-flex flex-column">
+                    <h6 class="fw-bold text-dark mb-2">Lộ trình tự luyện thi TOEIC 650+ hiệu quả cho sinh viên</h6>
+                    <p class="text-secondary small flex-grow-1 mb-3">
+                        Phương pháp phân bổ thời gian làm bài Part 5, Part 7 và cách ghi nhớ 600 từ vựng cốt lõi giúp tăng điểm nhanh chóng.
+                    </p>
+                    <div class="small text-muted"><i class="bi bi-calendar3 me-1"></i>29/10/2026</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card blog-card h-100 border rounded-4 overflow-hidden shadow-sm bg-white">
+                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80"
+                     class="card-img-top blog-img" alt="Từ vựng nghề nghiệp">
+                <div class="card-body p-4 d-flex flex-column">
+                    <h6 class="fw-bold text-dark mb-2">100+ từ vựng Tiếng Anh về nghề nghiệp và phỏng vấn</h6>
+                    <p class="text-secondary small flex-grow-1 mb-3">
+                        Hệ thống từ vựng theo từng nhóm ngành nghề phổ biến, dễ học – dễ nhớ, giúp bạn tự tin hơn khi viết CV và phỏng vấn.
+                    </p>
+                    <div class="small text-muted"><i class="bi bi-calendar3 me-1"></i>12/11/2026</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="card border-0 rounded-4 overflow-hidden shadow-sm bg-white mb-5">
+    <div class="row g-0 align-items-stretch">
+        <div class="col-lg-6 p-4 p-md-5 d-flex flex-column justify-content-center">
+            <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2 fw-semibold align-self-start mb-3">
+                <i class="bi bi-chat-heart-fill me-1"></i>Phương pháp học thực tế
+            </span>
+            <h2 class="fw-bold text-dark mb-3 lh-sm">
+                Học ngoại ngữ tự nhiên, tự tin giao tiếp ngay từ buổi đầu tiên
+            </h2>
+            <p class="text-secondary mb-4">
+                Đội ngũ giảng viên giàu kinh nghiệm tại Ngoại Ngữ Nhóm 7 luôn đồng hành sát sao, giúp bạn sửa phát âm trực tiếp, xây dựng phản xạ thực tế và chinh phục mục tiêu điểm số nhanh chóng.
+            </p>
+            <div class="d-flex flex-column gap-2 text-dark small fw-medium">
+                <div><i class="bi bi-check-circle-fill text-primary me-2"></i>Lớp học sĩ số chuẩn, tương tác trực tiếp cùng giáo viên</div>
+                <div><i class="bi bi-check-circle-fill text-primary me-2"></i>Lộ trình cá nhân hóa cho Tiếng Anh, Tiếng Hàn và Tiếng Nhật</div>
+                <div><i class="bi bi-check-circle-fill text-primary me-2"></i>Theo dõi điểm số và tiến độ chuyên cần minh bạch trực tuyến</div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=900&q=80"
+                 alt="Học viên tự tin giao tiếp ngoại ngữ"
+                 class="split-banner-img">
+        </div>
+    </div>
+</section>
+
+
+<section class="cta-dark-banner text-white text-center rounded-4 px-4 py-5 mb-5 shadow">
+    <div class="py-3 mx-auto" style="max-width: 680px;">
+        <h2 class="cta-tilted-title display-5 fw-bold mb-3">Đừng bỏ lỡ nhé!</h2>
+        <p class="fs-6 text-white-50 mb-4">
+            Tham gia cùng hơn 15.000 học viên yêu thích ngôn ngữ đang học thật nhanh và thật vui cùng Ngoại Ngữ Nhóm 7.
+        </p>
+        <a href="#danh-sach-khoa-hoc" class="btn btn-cta-yellow fw-bold px-5 py-3 rounded-3 fs-6">
+            Bắt đầu học
+        </a>
+    </div>
+</section>
+    </main>
+{%endblock%}

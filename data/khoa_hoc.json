@@ -1,0 +1,50 @@
+[
+  {
+    "maKH": "KH01",
+    "tenKH": "Tiếng Anh Giao Tiếp Cơ Bản",
+    "moTa": "Xây dựng nền tảng phát âm và phản xạ giao tiếp hàng ngày.",
+    "thoiLuong": 24,
+    "Img" : "https://res.edu.vn/wp-content/uploads/2021/01/tieng-anh-giao-tiep.jpg",
+    "maCapDo": "CD01"
+  },
+  {
+    "maKH": "KH02",
+    "tenKH": "Luyện Thi TOEIC 650+",
+    "moTa": "Rèn luyện kỹ năng nghe hiểu và đọc hiểu bám sát đề thi mới.",
+    "thoiLuong": 30,
+    "Img" : "https://res.edu.vn/wp-content/uploads/2021/01/tieng-anh-giao-tiep.jpg",
+    "maCapDo": "CD02"
+  },
+  {
+    "maKH": "KH03",
+    "tenKH": "Luyện Thi IELTS Intensive 7.0+",
+    "moTa": "Chuyên sâu 4 kỹ năng học thuật chuẩn bị cho kỳ thi IELTS.",
+    "thoiLuong": 36,
+    "Img" : "https://res.edu.vn/wp-content/uploads/2021/01/tieng-anh-giao-tiep.jpg",
+    "maCapDo": "CD03"
+  },
+  {
+    "maKH": "KH04",
+    "tenKH": "Tiếng Hàn Sơ Cấp 1",
+    "moTa": "Làm quen bảng chữ cái Hangul và giao tiếp cơ bản.",
+    "thoiLuong": 24,
+    "Img" : "https://res.edu.vn/wp-content/uploads/2021/01/tieng-anh-giao-tiep.jpg",
+    "maCapDo": "CD01"
+  },
+  {
+    "maKH": "KH05",
+    "tenKH": "Tiếng Nhật JLPT N3",
+    "moTa": "Hệ thống ngữ pháp, Kanji và luyện đề thi JLPT N3.",
+    "thoiLuong": 32,
+    "Img" : "https://res.edu.vn/wp-content/uploads/2021/01/tieng-anh-giao-tiep.jpg",
+    "maCapDo": "CD02"
+  },
+  {
+    "maKH": "KH06",
+    "tenKH": "Tiếng Nhật JLPT N1",
+    "moTa": "Hệ thống ngữ pháp, Kanji và luyện đề thi JLPT N1.",
+    "thoiLuong": 25,
+    "Img" : "https://res.edu.vn/wp-content/uploads/2021/01/tieng-anh-giao-tiep.jpg",
+    "maCapDo": "CD03"
+  }
+]

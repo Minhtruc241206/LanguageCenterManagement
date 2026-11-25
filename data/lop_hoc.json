@@ -1,0 +1,123 @@
+[
+  {
+    "maLop": "L01",
+    "tenLop": "GT-CB-01 (T2-T4-T6)",
+    "ngayBatDau": "2026-12-01",
+    "ngayKetThuc": "2027-02-01",
+    "siSoToiDa": 25,
+    "siSoHienTai": 12,
+    "maKH": "KH01",
+    "maGV": "GV01"
+  },
+
+  {
+    "maLop": "L02",
+    "tenLop": "GT-CB-02 (T3-T5-T7)",
+    "ngayBatDau": "2026-12-05",
+    "ngayKetThuc": "2027-02-05",
+    "siSoToiDa": 25,
+    "siSoHienTai": 25,
+    "maKH": "KH01",
+    "maGV": "GV01"
+  },
+  {
+    "maLop": "L07",
+    "tenLop": "GT-CB-07 (T2-T4-T6)",
+    "ngayBatDau": "2026-12-12",
+    "ngayKetThuc": "2027-02-12",
+    "siSoToiDa": 25,
+    "siSoHienTai": 25,
+    "maKH": "KH01",
+    "maGV": "GV01"
+  },
+  {
+    "maLop": "L08",
+    "tenLop": "GT-CB-08 (T2-T4-T6)",
+    "ngayBatDau": "2026-12-13",
+    "ngayKetThuc": "2027-02-13",
+    "siSoToiDa": 25,
+    "siSoHienTai": 12,
+    "maKH": "KH01",
+    "maGV": "GV01"
+  },
+  {
+    "maLop": "L09",
+    "tenLop": "GT-CB-09 (T2-T4-T6)",
+    "ngayBatDau": "2026-12-30",
+    "ngayKetThuc": "2027-02-02",
+    "siSoToiDa": 25,
+    "siSoHienTai": 2,
+    "maKH": "KH01",
+    "maGV": "GV01"
+  },
+  {
+    "maLop": "L03",
+    "tenLop": "TOEIC-650-01 (Tối T2-T4-T6)",
+    "ngayBatDau": "2026-12-01",
+    "ngayKetThuc": "2027-02-15",
+    "siSoToiDa": 25,
+    "siSoHienTai": 18,
+    "maKH": "KH02",
+    "maGV": "GV01"
+  },
+  {
+    "maLop": "L04",
+    "tenLop": "IELTS-70-01 (Cuối tuần)",
+    "ngayBatDau": "2026-12-06",
+    "ngayKetThuc": "2027-03-06",
+    "siSoToiDa": 25,
+    "siSoHienTai": 10,
+    "maKH": "KH03",
+    "maGV": "GV01"
+  },
+  {
+    "maLop": "L05",
+    "tenLop": "HAN-SC1-01 (Tối T3-T5-T7)",
+    "ngayBatDau": "2026-12-02",
+    "ngayKetThuc": "2027-02-02",
+    "siSoToiDa": 25,
+    "siSoHienTai": 15,
+    "maKH": "KH04",
+    "maGV": "GV02"
+  },
+  {
+    "maLop": "L06",
+    "tenLop": "NHAT-N3-01 (Tối T2-T4-T6)",
+    "ngayBatDau": "2026-12-03",
+    "ngayKetThuc": "2027-02-20",
+    "siSoToiDa": 25,
+    "siSoHienTai": 20,
+    "maKH": "KH05",
+    "maGV": "GV02"
+  },
+  {
+    "maLop": "L12",
+    "tenLop": "NHAT-N3-12 (Tối T2-T4-T6)",
+    "ngayBatDau": "2026-05-03",
+    "ngayKetThuc": "2027-08-20",
+    "siSoToiDa": 25,
+    "siSoHienTai": 2,
+    "maKH": "KH05",
+    "maGV": "GV02"
+  },
+  {
+    "maLop": "L22",
+    "tenLop": "NHAT-N1-22 (Tối T2-T4-T6)",
+    "ngayBatDau": "2026-05-03",
+    "ngayKetThuc": "2027-08-20",
+    "siSoToiDa": 25,
+    "siSoHienTai":21,
+    "maKH": "KH06",
+    "maGV": "GV02"
+  },
+  {
+    "maLop": "L23",
+    "tenLop": "NHAT-N1-23 (Tối T2-T4-T6)",
+    "ngayBatDau": "2026-01-03",
+    "ngayKetThuc": "2027-08-20",
+    "siSoToiDa": 25,
+    "siSoHienTai":1,
+    "maKH": "KH06",
+    "maGV": "GV02"
+  }
+]

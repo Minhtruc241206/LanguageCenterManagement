@@ -1,0 +1,20 @@
+[
+  {
+    "maLoaiDiem": "LD01",
+    "tenLoaiDiem": "Chuyên cần",
+    "heSo": 0.1,
+    "dangSuDung": true
+  },
+  {
+    "maLoaiDiem": "LD02",
+    "tenLoaiDiem": "Giữa kỳ",
+    "heSo": 0.3,
+    "dangSuDung": true
+  },
+  {
+    "maLoaiDiem": "LD03",
+    "tenLoaiDiem": "Cuối kỳ",
+    "heSo": 0.6,
+    "dangSuDung": true
+  }
+]
