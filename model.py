@@ -1,11 +1,15 @@
 import json
+import os
 from datetime import datetime, date
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, Integer, String, Double, ForeignKey, true, Boolean
 from flask_login import UserMixin, LoginManager
+from flask_mail import Mail
+from dotenv import load_dotenv
 
 app = Flask(__name__)
+load_dotenv()
 
 
 app.config["SQLALCHEMY_DATABASE_URI"] ="mysql+pymysql://root:root@localhost/LanguageCenterManagement?charset=utf8mb4"
@@ -15,6 +19,15 @@ login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
 db = SQLAlchemy(app)
+
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+app.config['MAIL_DEFAULT_SENDER'] = ('Trung Tâm Ngoại Ngữ Nhóm 7', os.environ.get('MAIL_USERNAME'))
+
+mail = Mail(app)
 
 class NguoiDung(db.Model, UserMixin):
     __tablename__ = 'NGUOI_DUNG'

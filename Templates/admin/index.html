@@ -1,0 +1,44 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+    {% if current_user.is_authenticated and current_user.vaiTro == 'QuanLy' %}
+        <div class="p-4 bg-light rounded shadow-sm mt-3">
+            <h2 class="text-primary">Chào mừng Quản lý {{ current_user.hoTen }}!</h2>
+            <p class="text-muted mb-0">
+                Chọn các mục trên thanh menu để quản lý Cấp độ, Khóa học, Lớp học, Học viên và xem Thống kê.
+            </p>
+        </div>
+    {% else %}
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-5">
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+                        <h3 class="text-center text-primary mb-4">ĐĂNG NHẬP QUẢN TRỊ</h3>
+
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                {% for category, message in messages %}
+                                    <div class="alert alert-{{ category }} py-2 small">{{ message }}</div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+
+                        <form method="POST" action="/login-admin">
+                            <div class="form-group mb-3">
+                                <label class="font-weight-bold">Tên đăng nhập</label>
+                                <input type="text" class="form-control" name="tenDangNhap"
+                                       placeholder="Nhập tài khoản quản lý..." required>
+                            </div>
+                            <div class="form-group mb-4">
+                                <label class="font-weight-bold">Mật khẩu</label>
+                                <input type="password" class="form-control" name="matKhau"
+                                       placeholder="Nhập mật khẩu..." required>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block w-100">Đăng nhập</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

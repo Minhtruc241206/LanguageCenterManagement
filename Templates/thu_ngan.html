@@ -1,0 +1,190 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+
+    <div class="row g-3 align-items-center mb-4">
+        <div class="col-lg-6">
+            <form method="GET" action="/thu-ngan" class="position-relative">
+                <input type="hidden" name="status" value="{{ status }}">
+                <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                <input type="text" name="kw" value="{{ kw }}"
+                       class="form-control rounded-pill ps-5 py-2 border-secondary-subtle"
+                       placeholder="Tìm theo Mã ĐK, Mã HV hoặc Tên học viên...">
+            </form>
+        </div>
+        <div class="col-lg-6">
+            <div class="segmented-control d-flex">
+                <a href="/thu-ngan?status=all&kw={{ kw }}"
+                   class="btn flex-fill {{ 'active' if status == 'all' }}">Tất cả</a>
+                <a href="/thu-ngan?status=unpaid&kw={{ kw }}"
+                   class="btn flex-fill {{ 'active' if status == 'unpaid' }}">Chưa thanh toán</a>
+                <a href="/thu-ngan?status=paid&kw={{ kw }}"
+                   class="btn flex-fill {{ 'active' if status == 'paid' }}">Đã thanh toán</a>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row g-4 align-items-start">
+
+        <div class="col-lg-7">
+            <div class="panel-box p-3">
+                <div class="text-muted small mb-3 fw-medium">
+                    Danh sách Phiếu đăng ký · {{ ds_dang_ky|length }} phiếu
+                </div>
+
+                <div class="table-responsive border rounded-3">
+                    <table class="table table-hover align-middle mb-0 small">
+                        <thead class="table-light">
+                            <tr class="text-uppercase text-secondary" style="font-size: 0.78rem;">
+                                <th class="ps-3">Mã ĐK</th>
+                                <th>Học viên</th>
+                                <th>Lớp / Khóa học</th>
+                                <th>Học phí</th>
+                                <th>Trạng thái</th>
+                                <th class="text-end pe-3">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for dk in ds_dang_ky %}
+                            {% set is_selected = (dk_dang_chon and dk_dang_chon.maDK == dk.maDK) %}
+                            <tr class="{{ 'row-selected fw-semibold' if is_selected }}"
+                                style="cursor: pointer;"
+                                onclick="window.location='/thu-ngan?status={{ status }}&kw={{ kw }}&selected={{ dk.maDK }}'">
+                                <td class="ps-3 fw-bold">{{ dk.maDK }}</td>
+                                <td>
+                                    <div class="text-truncate" style="max-width: 150px;" title="{{ dk.hoc_vien.nguoi_dung.hoTen }}">
+                                        {{ dk.hoc_vien.nguoi_dung.hoTen }}
+                                    </div>
+                                    <div class="text-muted" style="font-size: 0.75rem;">{{ dk.maHV }}</div>
+                                </td>
+                                <td>
+                                    <div class="text-truncate" style="max-width: 160px;" title="{{ dk.lop_hoc.tenLop }}">
+                                        {{ dk.lop_hoc.tenLop }}
+                                    </div>
+                                    <div class="text-muted text-truncate" style="max-width: 160px; font-size: 0.75rem;">
+                                        {{ dk.lop_hoc.khoa_hoc.tenKH }}
+                                    </div>
+                                </td>
+                                <td class="text-nowrap">
+                                    {{ "{:,.0f}".format(dk.lop_hoc.khoa_hoc.cap_do.mucHocPhi).replace(",", ".") }} đ
+                                </td>
+                                <td>
+                                    {% if dk.hoa_don %}
+                                        <span class="badge bg-success-subtle text-success rounded-pill px-2 py-1">Đã thu</span>
+                                    {% else %}
+                                        <span class="badge bg-warning-subtle text-warning-emphasis rounded-pill px-2 py-1">Chờ thu</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end pe-3 text-nowrap">
+                                    <a href="/thu-ngan?status={{ status }}&kw={{ kw }}&selected={{ dk.maDK }}"
+                                       class="text-decoration-none fw-medium {{ 'text-primary' if not dk.hoa_don else 'text-secondary' }}">
+                                        {{ 'Xem/In HĐ' if dk.hoa_don else 'Lập hóa đơn' }}
+                                    </a>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-4">
+                                    Không có phiếu đăng ký nào phù hợp.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-lg-5">
+            <div id="print-invoice-area" class="panel-box p-4">
+                <div class="text-muted small mb-3 fw-medium">Chi tiết Hóa đơn</div>
+
+                {% if dk_dang_chon %}
+                    {% set hd = dk_dang_chon.hoa_don %}
+
+                    {% if hd %}
+                    <div class="alert alert-success d-flex align-items-center gap-2 py-2 px-3 rounded-3 mb-4 small">
+                        <i class="bi bi-check-circle-fill fs-5"></i>
+                        <div>Hóa đơn đã được thanh toán hoàn tất.</div>
+                    </div>
+                    {% else %}
+                    <div class="border border-dark-subtle bg-light d-flex align-items-center gap-2 py-2 px-3 rounded-3 mb-4 small">
+                        <i class="bi bi-lightning-fill fs-5 text-dark"></i>
+                        <div>Phiếu đăng ký đang chờ thu học phí.</div>
+                    </div>
+                    {% endif %}
+
+                    <div class="detail-row">
+                        <span class="text-muted">Mã hóa đơn</span>
+                        <span class="fw-medium">{{ hd.maHD if hd else ma_hd_du_kien ~ ' (Dự kiến)' }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="text-muted">Mã đăng ký</span>
+                        <span class="fw-medium">{{ dk_dang_chon.maDK }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="text-muted">Học viên</span>
+                        <span class="fw-medium">{{ dk_dang_chon.hoc_vien.nguoi_dung.hoTen }} · {{ dk_dang_chon.maHV }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="text-muted">Lớp học</span>
+                        <span class="fw-medium text-end" style="max-width: 60%;">{{ dk_dang_chon.lop_hoc.tenLop }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="text-muted">Cấp độ</span>
+                        <span class="fw-medium">{{ dk_dang_chon.lop_hoc.khoa_hoc.cap_do.tenCapDo }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="text-muted">Ngày nộp</span>
+                        <span class="fw-medium">{{ hd.ngayNop.strftime('%d/%m/%Y') if (hd and hd.ngayNop) else ngay_hien_tai }}</span>
+                    </div>
+                    <div class="detail-row border-bottom-0 pb-3">
+                        <span class="fw-semibold text-dark">Thu ngân</span>
+                        <span class="fw-bold text-dark">
+                            {% if hd and hd.thu_ngan %}
+                                {{ hd.maTN }} - {{ hd.thu_ngan.nguoi_dung.hoTen }}
+                            {% else %}
+                                {{ current_user.thu_ngan.maTN }} - {{ current_user.hoTen }}
+                            {% endif %}
+                        </span>
+                    </div>
+
+                    <hr class="my-3">
+
+
+                    {% set so_tien = hd.soTien if hd else dk_dang_chon.lop_hoc.khoa_hoc.cap_do.mucHocPhi %}
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <span class="fw-bold text-dark">{{ 'Tổng tiền đã thu' if hd else 'Số tiền cần thu' }}</span>
+                        <span class="fs-5 fw-bold text-dark">
+                            {{ "{:,.0f}".format(so_tien).replace(",", ".") }} đ
+                        </span>
+                    </div>
+
+                    <div class="no-print">
+                        {% if not hd %}
+                        <form method="POST" action="/thu-ngan/lap-hoa-don/{{ dk_dang_chon.maDK }}"
+                              onsubmit="return confirm('Xác nhận đã thu {{ "{:,.0f}".format(so_tien).replace(",", ".") }} đ và lập hóa đơn cho phiếu {{ dk_dang_chon.maDK }}?');">
+                            <button type="submit" class="btn btn-dark w-100 py-2 rounded-3 fw-semibold">
+                                <i class="bi bi-check-circle me-2"></i>Xác nhận thu tiền & Lập hóa đơn
+                            </button>
+                        </form>
+                        {% else %}
+                        <button type="button" onclick="window.print()" class="btn btn-outline-dark w-100 py-2 rounded-3 fw-semibold">
+                            <i class="bi bi-printer me-2"></i>In hóa đơn
+                        </button>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <div class="text-center text-muted py-5">
+                        <i class="bi bi-receipt-cutoff fs-1 d-block mb-2"></i>
+                        Chọn một phiếu đăng ký bên trái để xem chi tiết.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

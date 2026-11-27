@@ -8,16 +8,6 @@
 </div>
 {% endif %}
 
-{% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        {% for category, message in messages %}
-        <div class="alert alert-{{ category }} alert-dismissible fade show py-2 small" role="alert">
-            <i class="bi bi-check-circle-fill me-1"></i> {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        {% endfor %}
-    {% endif %}
-{% endwith %}
 <form method="post" action="/login">
                             <div class="mb-3">
                                 <label class="form-label fw-medium small text-secondary">Tên đăng nhập</label>

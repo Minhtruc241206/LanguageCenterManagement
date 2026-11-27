@@ -23,6 +23,11 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#lien-he">Liên Hệ</a>
                     </li>
+                    {% if current_user.is_authenticated and current_user.hoc_vien %}
+                    <li class="nav-item">
+                        <a class="nav-link active text-primary" href="/my-courses">&#128722;Khóa học của tôi</a>
+                    </li>
+                    {% endif %}
                 </ul>
 
                 {% if current_user.is_authenticated %}
@@ -41,3 +46,29 @@
             </div>
         </div>
     </nav>
+
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <div class="toast align-items-center text-bg-{{ category }} border-0 show mb-2 shadow" role="alert">
+                <div class="d-flex">
+                    <div class="toast-body fw-medium">
+                        {% if category == 'success' %}
+                            <i class="bi bi-check-circle-fill me-2"></i>
+                        {% elif category == 'danger' %}
+                            <i class="bi bi-x-circle-fill me-2"></i>
+                        {% elif category == 'warning' %}
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        {% else %}
+                            <i class="bi bi-info-circle-fill me-2"></i>
+                        {% endif %}
+                        {{ message }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+</div>

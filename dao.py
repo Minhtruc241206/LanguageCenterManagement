@@ -2,7 +2,10 @@ import hashlib
 import uuid
 from datetime import datetime
 
-from model import CapDo, KhoaHoc, LopHoc, db, NguoiDung, HocVien
+from sqlalchemy import or_
+
+import utils
+from model import CapDo, KhoaHoc, LopHoc, db, NguoiDung, HocVien, DangKy, ThamSoQuyDinh, HoaDon
 
 
 def loadCapDo():
@@ -71,3 +74,156 @@ def dang_ky_hoc_vien(ho_ten, ten_dang_nhap, mat_khau, email, so_dien_thoai, ngay
     db.session.commit()
 
     return None
+
+
+def dang_ky_lop_hoc(ma_hv, ma_lop):
+
+    lop = LopHoc.query.get(ma_lop)
+    if not lop:
+        return False, "Lớp học không tồn tại!"
+
+    gioi_han_si_so = min(lop.siSoToiDa, lay_si_so_toi_da())
+    if lop.siSoHienTai >= gioi_han_si_so:
+        return False, f"Lớp {lop.tenLop} đã đủ sĩ số ({lop.siSoHienTai}/{gioi_han_si_so})!"
+
+    da_dk = DangKy.query.filter(
+        DangKy.maHV == ma_hv,
+        DangKy.maLop == ma_lop
+    ).first()
+    if da_dk:
+        return False, f"Bạn đã đăng ký lớp {lop.tenLop} trước đó rồi!"
+
+
+
+    ma_dk = f"DK{datetime.now().strftime('%y%m%d')}{uuid.uuid4().hex[:6].upper()}"
+
+    dk_moi = DangKy(
+        maDK=ma_dk,
+        maHV=ma_hv,
+        maLop=ma_lop,
+        hinhThucDangKy='Trực tuyến'
+    )
+
+    try:
+        lop.siSoHienTai += 1
+        db.session.add(dk_moi)
+        db.session.commit()
+        try:
+            email_hv = dk_moi.hoc_vien.nguoi_dung.email
+            ho_ten_hv = dk_moi.hoc_vien.nguoi_dung.hoTen
+            if email_hv and utils.gui_email_dang_ky(email_hv, ho_ten_hv, dk_moi):
+                dk_moi.trangThaiEmail = True
+                db.session.commit()
+        except Exception as mail_ex:
+            print("Lỗi gửi email xác nhận:", mail_ex)
+        return True, f"Đăng ký lớp {lop.tenLop} thành công!"
+    except Exception as ex:
+        db.session.rollback()
+        return False, f"Lỗi hệ thống: {str(ex)}"
+
+
+
+def lay_khoa_hoc_cua_toi(ma_hv):
+    return DangKy.query.filter(
+        DangKy.maHV == ma_hv
+    ).order_by(DangKy.ngayDangKy.desc()).all()
+
+
+def huy_dang_ky_lop(ma_dk, ma_hv):
+
+    dk = DangKy.query.filter(
+        DangKy.maDK == ma_dk,
+        DangKy.maHV == ma_hv
+    ).first()
+
+    if not dk:
+        return False, "Không tìm thấy thông tin đăng ký này!"
+
+
+    if dk.hoa_don is not None:
+        return False, "Khóa học đã thanh toán học phí nên không thể tự hủy!"
+
+    try:
+        lop = dk.lop_hoc
+        ten_lop = lop.tenLop if lop else ""
+
+
+        if lop and lop.siSoHienTai > 0:
+            lop.siSoHienTai -= 1
+
+        db.session.delete(dk)
+        db.session.commit()
+        return True, f"Đã hủy đăng ký lớp {ten_lop} thành công!"
+    except Exception as ex:
+        db.session.rollback()
+        return False, f"Có lỗi xảy ra khi hủy: {str(ex)}"
+
+def lay_tham_so(ma_tham_so, mac_dinh=None):
+    ts = ThamSoQuyDinh.query.get(ma_tham_so)
+    return ts.giaTri if ts else mac_dinh
+
+
+def lay_si_so_toi_da():
+    try:
+        return int(lay_tham_so('SI_SO_TOI_DA', 25))
+    except (ValueError, TypeError):
+        return 25
+
+def tao_ma_hoa_don_moi():
+    ds_hd = HoaDon.query.with_entities(HoaDon.maHD).all()
+    max_num = 0
+    for (ma,) in ds_hd:
+        try:
+            num = int(ma.replace('HD', ''))
+            if num > max_num:
+                max_num = num
+        except ValueError:
+            continue
+    return f"HD{max_num + 1:03d}"
+
+
+def lay_ds_dang_ky_thu_ngan(kw=None, trang_thai='all'):
+    query = DangKy.query.join(HocVien).join(NguoiDung)
+
+    if kw:
+        kw = kw.strip()
+        query = query.filter(or_(
+            DangKy.maDK.contains(kw),
+            HocVien.maHV.contains(kw),
+            NguoiDung.hoTen.contains(kw)
+        ))
+
+    if trang_thai == 'unpaid':
+        query = query.outerjoin(HoaDon).filter(HoaDon.maHD == None)
+    elif trang_thai == 'paid':
+        query = query.join(HoaDon)
+
+    return query.order_by(DangKy.ngayDangKy.desc()).all()
+
+
+def lap_hoa_don(ma_dk, ma_tn):
+
+    dk = DangKy.query.get(ma_dk)
+    if not dk:
+        return False, "Không tìm thấy phiếu đăng ký này!"
+
+    if dk.hoa_don is not None:
+        return False, f"Phiếu {ma_dk} đã được lập hóa đơn ({dk.hoa_don.maHD}) trước đó!"
+
+    try:
+        hoc_phi = dk.lop_hoc.khoa_hoc.cap_do.mucHocPhi
+        ma_hd = tao_ma_hoa_don_moi()
+
+        hd = HoaDon(
+            maHD=ma_hd,
+            maDK=dk.maDK,
+            maTN=ma_tn,
+            ngayNop=datetime.now(),
+            soTien=hoc_phi
+        )
+        db.session.add(hd)
+        db.session.commit()
+        return True, f"Đã lập hóa đơn {ma_hd} thành công!"
+    except Exception as ex:
+        db.session.rollback()
+        return False, f"Lỗi khi lập hóa đơn: {str(ex)}"
