@@ -195,26 +195,26 @@ if __name__ == '__main__':
         #         if not db.session.get(ThamSoQuyDinh, item['maThamSo']):
         #             db.session.add(ThamSoQuyDinh(**item))
         #
-        # # 2. Cấp độ
+
         # with open('data/cap_do.json', 'r', encoding='utf-8') as f:
         #     for item in json.load(f):
         #         if not db.session.get(CapDo, item['maCapDo']):
         #             db.session.add(CapDo(**item))
         #
-        # # 3. Loại điểm
+
         # with open('data/loai_diem.json', 'r', encoding='utf-8') as f:
         #     for item in json.load(f):
         #         if not db.session.get(LoaiDiem, item['maLoaiDiem']):
         #             db.session.add(LoaiDiem(**item))
         #
-        # # 4. Người dùng
+
         # with open('data/nguoi_dung.json', 'r', encoding='utf-8') as f:
         #     for item in json.load(f):
         #         if not db.session.get(NguoiDung, item['maND']):
         #             db.session.add(NguoiDung(**item))
         # db.session.commit()
         #
-        # # 5. Quản lý, Thu ngân, Giáo viên, Học viên (phụ thuộc NGUOI_DUNG)
+
         # with open('data/quan_ly.json', 'r', encoding='utf-8') as f:
         #     for item in json.load(f):
         #         if not db.session.get(QuanLy, item['maQL']):

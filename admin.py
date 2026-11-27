@@ -7,7 +7,7 @@ from flask_login import current_user, logout_user
 from model import CapDo, KhoaHoc, LopHoc, NguoiDung,DangKy, HoaDon, ThamSoQuyDinh
 from wtforms.validators import ValidationError
 import dao
-
+from wtforms import DecimalField
 
 class AuthenticatedModelView(ModelView):
     column_display_pk = True
@@ -45,6 +45,9 @@ class ThamSoView(AuthenticatedModelView):
 class CapDoView(AuthenticatedModelView):
     column_list = ['maCapDo', 'tenCapDo', 'mucHocPhi']
     form_columns = ['maCapDo', 'tenCapDo', 'mucHocPhi']
+    form_overrides = {
+        'mucHocPhi': DecimalField
+    }
     column_searchable_list = ['tenCapDo']
     column_labels = {
         'maCapDo': 'Mã cấp độ',

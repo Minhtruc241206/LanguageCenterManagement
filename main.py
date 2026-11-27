@@ -185,5 +185,66 @@ def xu_ly_lap_hoa_don(ma_dk):
 
     return redirect(f'/thu-ngan?selected={ma_dk}')
 
+
+@app.route('/giao-vien', methods=['GET', 'POST'])
+def trang_giao_vien():
+    if not current_user.is_authenticated or current_user.vaiTro != 'GiaoVien':
+        flash("Vui lòng đăng nhập bằng tài khoản Giáo viên!", "warning")
+        return redirect('/login')
+
+    ma_gv = current_user.giao_vien.maGV
+    ds_lop = dao.lay_ds_lop_cua_gv(ma_gv)
+    ma_lop = request.args.get('ma_lop')
+    tab = request.args.get('tab', 'diem_danh')
+    ngay_dd = request.args.get('ngay', datetime.now().strftime('%Y-%m-%d'))
+
+    if request.method == 'POST':
+        action = request.form.get('action')
+        ma_lop = request.form.get('ma_lop')
+
+        if action == 'luu_diem_danh':
+            ngay_dd = request.form.get('ngay_dd')
+            ok, msg = dao.luu_diem_danh(ma_lop, ngay_dd, request.form)
+            flash(msg, 'success' if ok else 'danger')
+            return redirect(f'/giao-vien?ma_lop={ma_lop}&tab=diem_danh&ngay={ngay_dd}')
+        else:
+            ok, msg = dao.luu_bang_diem(ma_lop, request.form)
+            flash(msg, 'success' if ok else 'danger')
+            return redirect(f'/giao-vien?ma_lop={ma_lop}&tab=nhap_diem')
+
+    lop_chon = None
+    if ma_lop:
+        for l in ds_lop:
+            if l.maLop == ma_lop:
+                lop_chon = l
+                break
+    if not lop_chon and len(ds_lop) > 0:
+        lop_chon = ds_lop[0]
+
+    ds_dk = []
+    bang_diem = {}
+    bang_diem_danh = {}
+    if lop_chon:
+        ds_dk = dao.lay_ds_dang_ky_theo_lop(lop_chon.maLop)
+        if tab == 'diem_danh':
+            bang_diem_danh = dao.lay_diem_danh_theo_ngay(ds_dk, ngay_dd)
+        else:
+            bang_diem = dao.lay_bang_diem_theo_lop(ds_dk)
+
+    ds_loai_diem = dao.lay_ds_loai_diem()
+
+    return render_template(
+        'giao_vien.html',
+        ds_lop=ds_lop,
+        lop_chon=lop_chon,
+        ds_dk=ds_dk,
+        ds_loai_diem=ds_loai_diem,
+        bang_diem=bang_diem,
+        bang_diem_danh=bang_diem_danh,
+        tab=tab,
+        ngay_dd=ngay_dd
+    )
+
+
 if __name__ == '__main__':
     app.run(debug=True,port=5001)

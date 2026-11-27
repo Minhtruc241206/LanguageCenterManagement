@@ -1,0 +1,240 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+<div class="container py-4">
+
+
+    <div class="card border rounded-3 p-3 mb-4">
+        <div class="small text-muted mb-2">Lớp học đang phụ trách</div>
+        <div class="row align-items-center g-3">
+            <div class="col-md-5">
+                <form method="GET" action="/giao-vien">
+                    <input type="hidden" name="tab" value="{{ tab }}">
+                    <input type="hidden" name="ngay" value="{{ ngay_dd }}">
+                    <select name="ma_lop" class="form-select" onchange="this.form.submit()">
+                        {% for l in ds_lop %}
+                        <option value="{{ l.maLop }}" {% if lop_chon and lop_chon.maLop == l.maLop %}selected{% endif %}>
+                            {{ l.maLop }} ({{ l.tenLop }}) — Sĩ số: {{ l.siSoHienTai }}/{{ l.siSoToiDa }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </form>
+            </div>
+
+            {% if lop_chon %}
+            <div class="col-md-7 d-flex flex-wrap gap-4 small text-secondary">
+                <div><strong>Ngày bắt đầu:</strong> {{ lop_chon.ngayBatDau.strftime('%d/%m/%Y') }}</div>
+                <div><strong>Ngày kết thúc:</strong> {{ lop_chon.ngayKetThuc.strftime('%d/%m/%Y') }}</div>
+                <div><strong>Sĩ số:</strong> {{ lop_chon.siSoHienTai }} / {{ lop_chon.siSoToiDa }}</div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if lop_chon %}
+    <ul class="nav nav-tabs mb-4">
+        <li class="nav-item">
+            <a class="nav-link fw-semibold {{ 'active text-dark' if tab == 'diem_danh' else 'text-muted' }}"
+               href="/giao-vien?ma_lop={{ lop_chon.maLop }}&tab=diem_danh&ngay={{ ngay_dd }}">
+                Điểm danh
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link fw-semibold {{ 'active text-dark' if tab == 'nhap_diem' else 'text-muted' }}"
+               href="/giao-vien?ma_lop={{ lop_chon.maLop }}&tab=nhap_diem">
+                Bảng điểm & Xếp loại
+            </a>
+        </li>
+    </ul>
+
+
+    {% if tab == 'diem_danh' %}
+    <div class="card border rounded-3 p-4">
+        <div class="d-flex flex-wrap align-items-center gap-3 mb-2">
+            <h4 class="fw-bold mb-0 me-3">Điểm danh buổi học</h4>
+
+            <form method="GET" action="/giao-vien" class="d-flex align-items-center gap-2">
+                <input type="hidden" name="ma_lop" value="{{ lop_chon.maLop }}">
+                <input type="hidden" name="tab" value="diem_danh">
+                <label class="small text-muted mb-0">Ngày điểm danh:</label>
+                <input type="date" name="ngay" value="{{ ngay_dd }}"
+                       class="form-control form-control-sm" style="width: 165px;"
+                       onchange="this.form.submit()">
+            </form>
+        </div>
+
+        <p class="text-muted small mb-3">
+            Ghi nhận chuyên cần của từng học viên theo ngày học.
+        </p>
+
+        <form method="POST" action="/giao-vien">
+            <input type="hidden" name="action" value="luu_diem_danh">
+            <input type="hidden" name="ma_lop" value="{{ lop_chon.maLop }}">
+            <input type="hidden" name="ngay_dd" value="{{ ngay_dd }}">
+
+            <div class="table-responsive border rounded-3 mb-3">
+                <table class="table table-hover align-middle mb-0 small">
+                    <thead class="table-light text-uppercase text-secondary">
+                        <tr>
+                            <th>Mã HV</th>
+                            <th>Họ và tên</th>
+                            <th>Email</th>
+                            <th>Trạng thái điểm danh</th>
+                            <th style="width: 220px;">Ghi chú</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for dk in ds_dk %}
+                        {% set dd = bang_diem_danh.get(dk.maDK) %}
+                        {% set tt_hien_tai = dd.trangThai if dd else 'Có mặt' %}
+                        <tr>
+                            <td>{{ dk.maHV }}</td>
+                            <td>{{ dk.hoc_vien.nguoi_dung.hoTen }}</td>
+                            <td class="text-muted">{{ dk.hoc_vien.nguoi_dung.email }}</td>
+                            <td class="text-nowrap">
+                                <label class="me-3" style="cursor: pointer;">
+                                    <input type="radio" class="form-check-input me-1"
+                                           name="tt_{{ dk.maDK }}" value="Có mặt"
+                                           {% if tt_hien_tai == 'Có mặt' %}checked{% endif %}>
+                                    Có mặt
+                                </label>
+                                <label class="me-3" style="cursor: pointer;">
+                                    <input type="radio" class="form-check-input me-1"
+                                           name="tt_{{ dk.maDK }}" value="Vắng có phép"
+                                           {% if tt_hien_tai == 'Vắng có phép' %}checked{% endif %}>
+                                    Vắng có phép
+                                </label>
+                                <label style="cursor: pointer;">
+                                    <input type="radio" class="form-check-input me-1"
+                                           name="tt_{{ dk.maDK }}" value="Vắng không phép"
+                                           {% if tt_hien_tai == 'Vắng không phép' %}checked{% endif %}>
+                                    Vắng không phép
+                                </label>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control form-control-sm"
+                                       name="gc_{{ dk.maDK }}"
+                                       value="{{ dd.ghiChu if (dd and dd.ghiChu) else '' }}"
+                                       placeholder="Nhập ghi chú...">
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-4">
+                                Lớp này chưa có học viên đăng ký.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="d-flex flex-wrap align-items-center gap-4">
+                <span class="small text-muted">
+                    {% if bang_diem_danh|length > 0 %}
+                        Đã lưu điểm danh cho ngày {{ ngay_dd }}.
+                    {% else %}
+                        Chưa lưu điểm danh cho ngày {{ ngay_dd }}.
+                    {% endif %}
+                </span>
+                <button type="submit" class="btn btn-dark px-4">
+                    <i class="bi bi-check-circle me-1"></i>Lưu điểm danh
+                </button>
+            </div>
+        </form>
+    </div>
+
+
+
+
+    {% else %}
+    <h4 class="fw-bold mb-1">Bảng điểm chi tiết & Xếp loại</h4>
+    <p class="text-muted small mb-3">
+        Nhập điểm thang 0 – 10 (bước nhảy 0.1). Hệ thống tự tính điểm trung bình và xếp loại.
+    </p>
+
+    <div class="border rounded-3 p-3 bg-light small mb-4">
+        <strong>Quy định tính điểm:</strong>
+        {% for ld in ds_loai_diem %}
+            {{ ld.tenLoaiDiem }} (hệ số = {{ ld.heSo }}) •
+        {% endfor %}
+        Ngưỡng Đạt: ≥ 5.0
+    </div>
+
+    <form method="POST" action="/giao-vien">
+        <input type="hidden" name="action" value="luu_diem">
+        <input type="hidden" name="ma_lop" value="{{ lop_chon.maLop }}">
+
+        <div class="table-responsive border rounded-3 mb-3">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light small text-uppercase">
+                    <tr>
+                        <th>Mã ĐK</th>
+                        <th>Mã HV</th>
+                        <th>Họ và tên</th>
+                        {% for ld in ds_loai_diem %}
+                        <th style="width: 140px;">{{ ld.tenLoaiDiem }} ({{ ld.heSo }})</th>
+                        {% endfor %}
+                        <th>Điểm TB</th>
+                        <th>Kết quả</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for dk in ds_dk %}
+                    <tr>
+                        <td>{{ dk.maDK }}</td>
+                        <td>{{ dk.maHV }}</td>
+                        <td>{{ dk.hoc_vien.nguoi_dung.hoTen }}</td>
+
+                        {% for ld in ds_loai_diem %}
+                        <td>
+                            <input type="number"
+                                   step="0.1" min="0" max="10"
+                                   class="form-control form-control-sm"
+                                   name="diem_{{ dk.maDK }}_{{ ld.maLoaiDiem }}"
+                                   value="{{ bang_diem.get((dk.maDK, ld.maLoaiDiem), '') }}"
+                                   placeholder="0 - 10">
+                        </td>
+                        {% endfor %}
+
+                        <td class="fw-bold">
+                            {{ dk.diemTrungBinh if dk.diemTrungBinh is not none else '-' }}
+                        </td>
+                        <td>
+                            {% if dk.ketQuaPhanLoai == 'Đạt' %}
+                                <span class="text-success fw-semibold">Đạt</span>
+                            {% elif dk.ketQuaPhanLoai == 'Không đạt' %}
+                                <span class="text-danger fw-semibold">Không đạt</span>
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center text-muted py-4">
+                            Lớp này chưa có học viên đăng ký.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="small text-muted">
+                Công thức: Điểm TB = round(CC×0.1 + GK×0.3 + CK×0.6, 2)
+            </div>
+            <button type="submit" class="btn btn-dark px-4">
+                Lưu bảng điểm & Tính điểm TB
+            </button>
+        </div>
+    </form>
+    {% endif %}
+
+    {% else %}
+    <div class="alert alert-secondary">Bạn chưa được phân công phụ trách lớp học nào.</div>
+    {% endif %}
+
+</div>
+{% endblock %}

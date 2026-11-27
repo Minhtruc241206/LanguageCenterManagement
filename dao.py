@@ -5,7 +5,8 @@ from datetime import datetime
 from sqlalchemy import or_
 
 import utils
-from model import CapDo, KhoaHoc, LopHoc, db, NguoiDung, HocVien, DangKy, ThamSoQuyDinh, HoaDon
+from model import CapDo, KhoaHoc, LopHoc, db, NguoiDung, HocVien, DangKy, ThamSoQuyDinh, HoaDon, ChiTietDiem, LoaiDiem, \
+    DiemDanh
 
 
 def loadCapDo():
@@ -227,3 +228,121 @@ def lap_hoa_don(ma_dk, ma_tn):
     except Exception as ex:
         db.session.rollback()
         return False, f"Lỗi khi lập hóa đơn: {str(ex)}"
+
+
+
+
+def lay_ds_lop_cua_gv(ma_gv):
+    return LopHoc.query.filter(LopHoc.maGV == ma_gv).all()
+
+
+def lay_ds_dang_ky_theo_lop(ma_lop):
+    return DangKy.query.filter(DangKy.maLop == ma_lop).all()
+
+
+def lay_ds_loai_diem():
+    return LoaiDiem.query.all()
+
+
+def lay_bang_diem_theo_lop(ds_dk):
+    ket_qua = {}
+    for dk in ds_dk:
+        ds_ct = ChiTietDiem.query.filter(ChiTietDiem.maDK == dk.maDK).all()
+        for ct in ds_ct:
+            ket_qua[(dk.maDK, ct.maLoaiDiem)] = ct.diemSo
+    return ket_qua
+
+
+def luu_bang_diem(ma_lop, form_data):
+    ds_dk = lay_ds_dang_ky_theo_lop(ma_lop)
+    ds_loai_diem = lay_ds_loai_diem()
+
+    for dk in ds_dk:
+        tong_diem = 0
+        tong_he_so = 0
+        du_diem = True
+
+        for ld in ds_loai_diem:
+            ten_o = f"diem_{dk.maDK}_{ld.maLoaiDiem}"
+            gia_tri = form_data.get(ten_o, '').strip()
+
+            if gia_tri != '':
+                so_diem = float(gia_tri)
+                if so_diem < 0 or so_diem > 10:
+                    return False, "Điểm nhập phải nằm trong khoảng từ 0 đến 10!"
+
+                ct = ChiTietDiem.query.filter(
+                    ChiTietDiem.maDK == dk.maDK,
+                    ChiTietDiem.maLoaiDiem == ld.maLoaiDiem
+                ).first()
+
+                if ct:
+                    ct.diemSo = so_diem
+                    ct.ngayNhap = datetime.now()
+                else:
+                    ct = ChiTietDiem(
+                        maCTD=f"CTD{uuid.uuid4().hex[:6].upper()}",
+                        maDK=dk.maDK,
+                        maLoaiDiem=ld.maLoaiDiem,
+                        diemSo=so_diem,
+                        ngayNhap=datetime.now()
+                    )
+                    db.session.add(ct)
+
+                tong_diem += so_diem * ld.heSo
+                tong_he_so += ld.heSo
+            else:
+                du_diem = False
+
+        if du_diem and tong_he_so > 0:
+            dk.diemTrungBinh = round(tong_diem / tong_he_so, 2)
+            if dk.diemTrungBinh >= 5.0:
+                dk.ketQuaPhanLoai = 'Đạt'
+            else:
+                dk.ketQuaPhanLoai = 'Không đạt'
+
+    db.session.commit()
+    return True, "Đã lưu bảng điểm và cập nhật xếp loại thành công!"
+
+
+def lay_diem_danh_theo_ngay(ds_dk, ngay_str):
+    ngay = datetime.strptime(ngay_str, '%Y-%m-%d').date()
+    ket_qua = {}
+    for dk in ds_dk:
+        dd = DiemDanh.query.filter(
+            DiemDanh.maDK == dk.maDK,
+            DiemDanh.ngayDiemDanh == ngay
+        ).first()
+        if dd:
+            ket_qua[dk.maDK] = dd
+    return ket_qua
+
+
+def luu_diem_danh(ma_lop, ngay_str, form_data):
+    ds_dk = lay_ds_dang_ky_theo_lop(ma_lop)
+    ngay = datetime.strptime(ngay_str, '%Y-%m-%d').date()
+
+    for dk in ds_dk:
+        trang_thai = form_data.get(f"tt_{dk.maDK}", "Có mặt")
+        ghi_chu = form_data.get(f"gc_{dk.maDK}", "").strip()
+
+        dd = DiemDanh.query.filter(
+            DiemDanh.maDK == dk.maDK,
+            DiemDanh.ngayDiemDanh == ngay
+        ).first()
+
+        if dd:
+            dd.trangThai = trang_thai
+            dd.ghiChu = ghi_chu
+        else:
+            dd = DiemDanh(
+                maDD=f"DD{uuid.uuid4().hex[:6].upper()}",
+                maDK=dk.maDK,
+                ngayDiemDanh=ngay,
+                trangThai=trang_thai,
+                ghiChu=ghi_chu
+            )
+            db.session.add(dd)
+
+    db.session.commit()
+    return True, f"Đã lưu điểm danh ngày {ngay_str} thành công!"
