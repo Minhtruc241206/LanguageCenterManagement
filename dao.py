@@ -2,7 +2,7 @@ import hashlib
 import uuid
 from datetime import datetime
 
-from sqlalchemy import or_
+from sqlalchemy import or_ ,func, extract, case
 
 import utils
 from model import CapDo, KhoaHoc, LopHoc, db, NguoiDung, HocVien, DangKy, ThamSoQuyDinh, HoaDon, ChiTietDiem, LoaiDiem, \
@@ -346,3 +346,44 @@ def luu_diem_danh(ma_lop, ngay_str, form_data):
 
     db.session.commit()
     return True, f"Đã lưu điểm danh ngày {ngay_str} thành công!"
+
+def thong_ke_doanh_thu_khoa_hoc(kw=None, from_date=None, to_date=None):
+    query = db.session.query(
+        KhoaHoc.maKH,
+        KhoaHoc.tenKH,
+        func.sum(HoaDon.soTien)
+    ).join(LopHoc, LopHoc.maKH.__eq__(KhoaHoc.maKH), isouter=True) \
+     .join(DangKy, DangKy.maLop.__eq__(LopHoc.maLop), isouter=True) \
+     .join(HoaDon, HoaDon.maDK.__eq__(DangKy.maDK), isouter=True)
+
+    if kw:
+        query = query.filter(KhoaHoc.tenKH.contains(kw))
+    if from_date:
+        query = query.filter(HoaDon.ngayNop >= from_date)
+    if to_date:
+        query = query.filter(HoaDon.ngayNop <= to_date)
+
+    return query.group_by(KhoaHoc.maKH, KhoaHoc.tenKH).all()
+
+
+def thong_ke_doanh_thu_theo_thang(year=None):
+    if not year:
+        year = datetime.now().year
+
+    return db.session.query(
+        extract('month', HoaDon.ngayNop),
+        func.sum(HoaDon.soTien)
+    ).filter(extract('year', HoaDon.ngayNop).__eq__(year)) \
+     .group_by(extract('month', HoaDon.ngayNop)) \
+     .order_by(extract('month', HoaDon.ngayNop)).all()
+
+
+def thong_ke_ty_le_dat_theo_khoa_hoc():
+    return db.session.query(
+        KhoaHoc.maKH,
+        KhoaHoc.tenKH,
+        func.count(DangKy.maDK),
+        func.sum(case((DangKy.ketQuaPhanLoai.__eq__('Đạt'), 1), else_=0))
+    ).join(LopHoc, LopHoc.maKH.__eq__(KhoaHoc.maKH), isouter=True) \
+     .join(DangKy, DangKy.maLop.__eq__(LopHoc.maLop), isouter=True) \
+     .group_by(KhoaHoc.maKH, KhoaHoc.tenKH).all()

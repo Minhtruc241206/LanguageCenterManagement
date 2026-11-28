@@ -1,10 +1,197 @@
 {% extends 'admin/master.html' %}
 
 {% block body %}
-    <div class="mt-3">
-        <h2 class="text-primary mb-4">THỐNG KÊ - BÁO CÁO TRUNG TÂM</h2>
-        <div class="alert alert-info">
-            Khu vực hiển thị biểu đồ doanh thu, tỷ lệ đạt và số lượng học viên theo khóa học.
-        </div>
+<h1 class="text-center text-info mt-2 mb-4">THỐNG KÊ BÁO CÁO TRUNG TÂM</h1>
+
+<h4 class="text-secondary mb-3">1. Thống kê doanh thu theo khóa học</h4>
+<div class="row mb-4">
+    <div class="col-md-5 col-12">
+        <table class="table table-bordered table-hover">
+            <thead class="thead-light">
+                <tr>
+                    <th>Mã KH</th>
+                    <th>Tên khóa học</th>
+                    <th>Doanh thu</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in stats_kh %}
+                <tr>
+                    <td>{{ s[0] }}</td>
+                    <td>{{ s[1] }}</td>
+                    <td>{{ "{:,.0f}".format(s[2] or 0) }} VNĐ</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
+
+    <div class="col-md-7 col-12">
+        <form class="mb-3">
+            <div class="form-group">
+                <input type="text" class="form-control" name="kw"
+                       value="{{ request.args.get('kw', '') }}"
+                       placeholder="Nhập tên khóa học cần lọc...">
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label class="small text-muted">Từ ngày</label>
+                    <input type="date" class="form-control" name="from_date"
+                           value="{{ request.args.get('from_date', '') }}">
+                </div>
+                <div class="form-group col-md-6">
+                    <label class="small text-muted">Đến ngày</label>
+                    <input type="date" class="form-control" name="to_date"
+                           value="{{ request.args.get('to_date', '') }}">
+                </div>
+            </div>
+            <input type="hidden" name="year" value="{{ year }}">
+            <button type="submit" class="btn btn-info">Lọc dữ liệu</button>
+        </form>
+
+        <canvas id="myChart1"></canvas>
+    </div>
+</div>
+
+<hr>
+
+<h4 class="text-secondary mb-3">2. Thống kê doanh thu theo tháng (Năm {{ year }})</h4>
+<div class="row mb-4">
+    <div class="col-md-5 col-12">
+        <table class="table table-bordered table-hover">
+            <thead class="thead-light">
+                <tr>
+                    <th>Tháng</th>
+                    <th>Doanh thu</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in stats_thang %}
+                <tr>
+                    <td>Tháng {{ s[0] }}</td>
+                    <td>{{ "{:,.0f}".format(s[1] or 0) }} VNĐ</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="2" class="text-center text-muted">Không có dữ liệu hóa đơn năm {{ year }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="col-md-7 col-12">
+        <form class="form-inline mb-3">
+            <label class="mr-2">Chọn năm:</label>
+            <input type="number" min="2020" max="2035" class="form-control mr-2"
+                   name="year" value="{{ year }}">
+            <button type="submit" class="btn btn-info">Xem theo năm</button>
+        </form>
+
+        <canvas id="myChart2"></canvas>
+    </div>
+</div>
+
+<hr>
+
+
+<h4 class="text-secondary mb-3">3. Thống kê học viên & Tỷ lệ Đạt theo khóa học</h4>
+<div class="row mb-5">
+    <div class="col-md-5 col-12">
+        <table class="table table-bordered table-hover">
+            <thead class="thead-light">
+                <tr>
+                    <th>Khóa học</th>
+                    <th>Tổng HV</th>
+                    <th>Số Đạt</th>
+                    <th>Tỷ lệ Đạt</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in stats_dat %}
+                {% set tong = s[2] or 0 %}
+                {% set dat = s[3] or 0 %}
+                {% set ty_le = (dat / tong * 100) if tong > 0 else 0 %}
+                <tr>
+                    <td>{{ s[1] }}</td>
+                    <td>{{ tong }}</td>
+                    <td>{{ dat }}</td>
+                    <td class="font-weight-bold text-success">{{ "%.1f"|format(ty_le) }}%</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="col-md-7 col-12">
+        <canvas id="myChart3"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    let labels1 = [], data1 = [];
+    {% for s in stats_kh %}
+        labels1.push('{{ s[1] }}');
+        data1.push({{ s[2] or 0 }});
+    {% endfor %}
+
+
+    let labels2 = [], data2 = [];
+    let doanhThuThang = {};
+    {% for s in stats_thang %}
+        doanhThuThang[{{ s[0] }}] = {{ s[1] or 0 }};
+    {% endfor %}
+
+    for (let i = 1; i <= 12; i++) {
+        labels2.push('Tháng ' + i);
+        data2.push(doanhThuThang[i] || 0);
+    }
+
+    let labels3 = [], data3 = [];
+    {% for s in stats_dat %}
+        {% set tong = s[2] or 0 %}
+        {% set dat = s[3] or 0 %}
+        labels3.push('{{ s[1] }}');
+        data3.push({{ "%.1f"|format((dat / tong * 100) if tong > 0 else 0) }});
+    {% endfor %}
+
+    function drawChart(ctx, labels, data, type, title) {
+        new Chart(ctx, {
+            type: type,
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: title,
+                    data: data,
+                    borderWidth: 2,
+                    borderColor: type === 'line' ? 'rgba(54, 162, 235, 1)' : 'rgba(0, 0, 0, 0.1)',
+                    backgroundColor: type === 'line' ? 'rgba(54, 162, 235, 0.2)' : [
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(255, 99, 132, 0.7)',
+                        'rgba(255, 206, 86, 0.7)',
+                        'rgba(75, 192, 192, 0.7)',
+                        'rgba(153, 102, 255, 0.7)',
+                        'rgba(255, 159, 64, 0.7)'
+                    ],
+                    fill: type === 'line',
+                    tension: 0.2
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    window.onload = function () {
+        drawChart(document.getElementById('myChart1'), labels1, data1, 'bar', 'Doanh thu (VNĐ)');
+        drawChart(document.getElementById('myChart2'), labels2, data2, 'line', 'Doanh thu theo tháng (VNĐ)');
+        drawChart(document.getElementById('myChart3'), labels3, data3, 'bar', 'Tỷ lệ Đạt (%)');
+    }
+</script>
 {% endblock %}
